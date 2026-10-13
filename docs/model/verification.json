@@ -1,0 +1,62 @@
+{
+  "scope": "bounded successful serialized application abstraction; no production verification",
+  "bounds": {
+    "quests": 2,
+    "exact_names": [
+      "Alex",
+      "alex",
+      "Blair"
+    ]
+  },
+  "reachable_states": 841,
+  "enumerated_transitions_including_no_ops": 23548,
+  "checked_abstract_properties": [
+    "No participants on unused/deleted quests",
+    "Allowed participant status range",
+    "No state mutation when admission predicate is false",
+    "A participant mutation leaves every other participant unchanged"
+  ],
+  "witness_multiple_independent_participants": [
+    "add(quest=0)",
+    "claim(quest=0)[Blair]",
+    "complete(quest=0)[Alex]"
+  ],
+  "expected_counterexamples": {
+    "case_insensitive_identity_uniqueness": [
+      "add(quest=0)",
+      "claim(quest=0)[Alex]",
+      "claim(quest=0)[alex]"
+    ],
+    "claim_required_before_complete": [
+      "add(quest=0)",
+      "complete(quest=0)[Alex]"
+    ],
+    "actor_must_equal_target": {
+      "actor_label": "Blair",
+      "submitted_target": "Alex",
+      "trace": [
+        "add(quest=0)",
+        "claim(quest=0)[Alex]"
+      ],
+      "reason": "Actor not used by current transition policy"
+    },
+    "logout_or_browser_lifetime_revokes_token": {
+      "trace": [
+        "login copies shared token",
+        "browser logout clears cookie",
+        "replay copy after 31 days"
+      ],
+      "accepted_in_abstract_predicate": true,
+      "configuration_rotation_rejects_old_copy": true
+    }
+  },
+  "excluded": [
+    "HTTP/router/provider/cookie-policy correctness",
+    "Actual TypeScript implementation execution",
+    "Legacy synthetic participants and creator fields",
+    "Malformed inputs, point coercion, timestamps and UI ordering",
+    "SQL constraints, failures, races and partial commits",
+    "Cryptographic entropy or token-guessing resistance",
+    "Dependency, browser, identity-provider or deployment security"
+  ]
+}
