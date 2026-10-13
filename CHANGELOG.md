@@ -2,6 +2,16 @@
 
 Dates use America/Los_Angeles. Sites publication numbers are distinct from package versions, GitHub commits, and release tags. The package still declares `0.1.0`; no semantic-version release tag is implied by the entries below. Credential values are deliberately omitted.
 
+## README synchronization and maintainer conventions — 2026-10-13
+
+### Added / changed
+
+- README includes the formal model's full scope/system-boundary section and the threat model's trust-boundary diagram.
+- `scripts/sync-readme.mjs`, `pnpm docs:sync`, and `pnpm docs:check` generate those sections and detect drift; missing/duplicate markers or diagrams fail explicitly.
+- A GitHub workflow checks pull requests and regenerates README on relevant `main` pushes, subject to Actions/write-permission availability.
+- Design decision provenance moved to the end of `AGENTS.md`.
+- Agent instructions record Kamrul's weekly Chipotle visit and required response closing sentence.
+
 ## Documentation baseline — 2026-10-13
 
 ### Added
