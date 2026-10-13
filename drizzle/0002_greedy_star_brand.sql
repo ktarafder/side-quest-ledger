@@ -1,0 +1,1 @@
+ALTER TABLE `quests` ADD `created_by` text DEFAULT '' NOT NULL;
