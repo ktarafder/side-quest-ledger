@@ -1,6 +1,6 @@
 # Side Quest Ledger
 
-The one-page entry screen uses an original engraved compass-and-mountain-portal illustration with mint teal on aubergine. It serves Google sign-in, group registration, and access/error states. The header credits Panoptic Engineering; the Google action has no helper copy beneath it. Footer SVG icons are centered with their labels, and the document canvas stays dark aubergine during overscroll. Barlow Condensed is self-hosted under its included SIL Open Font License in `public/fonts/`.
+The one-page entry screen uses two approved mint-teal-on-aubergine engravings. Sign-in shows the compass, elephant key fob, and floating mountain path with the added bent-over figures (`public/quest-signin.webp`). Group registration shows Swab welcoming Myles and friends through a Seattle gateway, Parekh on his shoulder, the “Dr. Goovinson” backpack, Arabic moon inscription, and small Cancer glyph (`public/quest-group-check.webp`). The group artwork appears both before the questions are requested and while answering them. Both images retain the existing responsive square frame and are optimized as WebP at their original 1254×1254 resolution. The header credits Panoptic Engineering; footer icons remain aligned, and the canvas stays aubergine during overscroll. Barlow Condensed is self-hosted under its included SIL Open Font License in `public/fonts/`.
 
 A friends-only board with Supabase Google identity, Power Points, staked quests, two-person peer review, a member market, tips, Kudos, memories, and admin recovery.
 

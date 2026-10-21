@@ -5,7 +5,10 @@ function CompassSeal() {
   return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="26"/><circle cx="32" cy="32" r="19" strokeDasharray="1 4"/><path d="m32 4 5 23 23 5-23 5-5 23-5-23-23-5 23-5Z"/><path d="m32 16 3 13 13 3-13 3-3 13-3-13-13-3 13-3Z" fill="currentColor"/><circle cx="32" cy="32" r="3" fill="var(--signup-bg)"/></svg>;
 }
 
-export default function QuestGate({children,enrolling=false}:{children:ReactNode;enrolling?:boolean}) {
+export default function QuestGate({children,enrolling=false,groupCheck=false}:{children:ReactNode;enrolling?:boolean;groupCheck?:boolean}) {
+  const art=groupCheck
+    ? {src:"/quest-group-check.webp",alt:"Swab welcomes Myles and friends through a Seattle gateway, with Parekh on his shoulder, celestial seals, and Mount Rainier beyond.",caption:"FIG. 02 — THE GROUP CHECK"}
+    : {src:"/quest-signin.webp",alt:"An engraved compass with an elephant key fob guides friends along a floating path toward a mountain portal.",caption:"FIG. 01 — THE SCENIC ROUTE"};
   return <main className={"signup-page"+(enrolling?" signup-enrolling":"")}>
     <header className="signup-header">
       <a className="signup-brand" href="/" aria-label="Side Quest Ledger home"><CompassSeal/><span>SIDE QUEST<br/>LEDGER</span></a>
@@ -20,8 +23,8 @@ export default function QuestGate({children,enrolling=false}:{children:ReactNode
         <div className="signup-controls">{children}</div>
       </section>
       <figure className="signup-art">
-        <div className="signup-art-frame"><span className="art-cross art-cross-top" aria-hidden="true">+</span><span className="art-cross art-cross-bottom" aria-hidden="true">+</span><img src="/quest-engraving.jpg" width="1254" height="1254" alt="An engraved compass guides two friends up winding steps toward a mountain framed by a celestial doorway." fetchPriority="high" decoding="async"/></div>
-        <figcaption><span>FIG. 01 — THE SCENIC ROUTE</span><span>THERE IS MORE OUT THERE ↗</span></figcaption>
+        <div className="signup-art-frame"><span className="art-cross art-cross-top" aria-hidden="true">+</span><span className="art-cross art-cross-bottom" aria-hidden="true">+</span><img src={art.src} width="1254" height="1254" alt={art.alt} fetchPriority="high" decoding="async"/></div>
+        <figcaption><span>{art.caption}</span><span>THERE IS MORE OUT THERE ↗</span></figcaption>
       </figure>
     </div>
     <footer className="signup-footer">

@@ -113,7 +113,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
   const person=board?.member;
   const adminAction=(title:string,op:string,params:Row={})=>setModal({kind:"admin",title,op,params});
   if(stage==="loading")return <main className="loading-screen"><span className="loading-mark" aria-label="Loading">支</span></main>;
-  if(stage!=="board" || !board || !person)return <QuestGate enrolling={stage==="register"&&!!quiz}>
+  if(stage!=="board" || !board || !person)return <QuestGate enrolling={stage==="register"&&!!quiz} groupCheck={stage==="register"}>
     {stage==="signin" && <div className="signup-action"><a className="submit-button login-button" href="/api/auth/google">CONTINUE WITH GOOGLE <ArrowUpRight size={19}/></a></div>}
     {stage==="setup" && <div className="setup-note"><b>Google sign-in is being connected.</b><p>The member board opens once setup is complete.</p><button className="text-button" onClick={()=>void boot()}>CHECK AGAIN</button></div>}
     {stage==="register" && <div className="registration"><h2>You're nearly in.</h2><p>Three group questions. Then your first 100 PP.</p>

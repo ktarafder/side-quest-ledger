@@ -1,5 +1,11 @@
 # Changelog
 
+## Approved sign-in and group-check artwork — 2026-10-21 (Pacific)
+
+Integrated the two illustrations approved by Kamrul: the compass/mountain path with bent-over figures and elephant key fob on sign-in, and the personalized Seattle gateway with Swab, Parekh, Myles’s Dr. Goovinson backpack, Arabic lunar inscription and small Cancer glyph throughout group registration. Both retain the established square frame and responsive layout. WebP encoding preserves 1254×1254 resolution while reducing combined transfer size from about 7.3 MiB to 1.32 MiB. Stage-specific alt text and the group-check figure caption match the displayed art. No new services, billing changes, auth or PP changes were introduced.
+
+TypeScript, production build, and direct React render checks of sign-in, pre-question group check and the active quiz pass. Browser visual QA was unavailable in this session.
+
 ## Self-service account deletion — 2026-10-21 (Pacific)
 
 Added account settings → DELETE MY ACCOUNT with typed confirmation, atomic D1 closure/anonymization, archived owned items, immutable PP retirement, obligation blockers, and a caller-authenticated Supabase Edge Function that revokes sessions and removes the app Auth user. Provider failures offer a finish-deletion retry. Re-registration repeats Google and the group quiz; a secret email HMAC prevents another starter grant. Shared records stay under Deleted member. Migration 0005 appends claim/closure tables. No paid resources or plan upgrades were enabled; media stays disabled.
