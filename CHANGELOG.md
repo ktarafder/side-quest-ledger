@@ -1,5 +1,45 @@
 # Changelog
 
+## GitHub source synchronization — 2026-10-20 (Pacific)
+
+Synchronized the tested Sites version 12 application source, member/PP migrations, Google setup notes, formatting fixes, banner removal, and separate admin route into the public GitHub repository. Preserved repository documentation and README synchronization automation, updated current scope, and labeled the earlier executable model and assessment as historical. Retired the obsolete shared-key auth module. Runtime secrets, data, fixtures, build outputs, and deployment archives are excluded. This GitHub update does not redeploy Sites.
+
+## Separate admin route — 2026-10-20 (Pacific)
+
+Moved the dashboard from the member tabs to `/admin`, with an admin-only entry link and a return link to the board. The normal board no longer loads admin data. Kept all dashboard recovery actions and server permission checks. Centralized registration/effective role checks and require both the stored admin role and the current verified Google email to match the configured owner; stale/mismatched roles are reported as member in `/api/me` too. No production member records or balances were changed.
+
+Validation: 128 domain checks, 12 owner-authorization checks, 11 local API access checks, TypeScript, and the production build passed. Local browser checks confirmed separate admin navigation, the adjustment dialog, no admin entry for an ordinary member, and a denied direct visit to `/admin`. All authentication tests used isolated synthetic users; no paid resources were enabled.
+
+## Simplified board — 2026-10-20 (Pacific)
+
+Removed the large “Do something sideways” banner from the member board. Board stats and section navigation now follow the header directly. Removed unused banner styles and moved the existing top anchor to the board container. Sign-in and registration screens are unchanged.
+
+## Spacing and responsive formatting — 2026-10-20 (Pacific)
+
+Separated the registration actions into a vertical group with a 16 px gap and added 18 px beneath the Google sign-in button. Added explicit registration intro spacing and a 20 px form rhythm for all ledger dialogs, including stacked fields at phone widths. Modal titles wrap without squeezing the close button; inputs and dialogs fit narrow screens. Long quest, reward, listing, member, and admin-row text wraps or ellipsizes within its container. Participant chips use working ellipses; the mobile header keeps the PP balance readable alongside a long member name. The existing palette and overall design are preserved.
+
+TypeScript and the production build pass. Browser inspection used only isolated local synthetic members and data. Sign-in and registration actions, board cards/header, quest dialog, market, admin rows/metrics, and leaderboard were checked at 320, 390, 768, and 1512 px; all measured page/container overflow checks passed. Wallet, review empty state, and archive empty state were also checked at 320 px. Live real-user onboarding was not changed or exercised, and no paid services or media storage were enabled.
+
+## Quest/market edits and reviewer recovery — 2026-10-20 (Pacific), Sites version 9 deployed
+
+Recovered the unsynchronized feature batch from the conversation onto canonical Sites version 8 source. Added owner quest edits before commitments/submissions, revision-checked commitments, market edits and additive restocking, protection against changed offers/prices at checkout, and audited admin replacement of pending reviewers with another random independent member. Appended migration 0004 without rebuilding existing tables or changing journal balances. All 128 domain/migration/permission/accounting/recovery/race checks, TypeScript, and the production build pass in the resumed Linux session. Authenticated browser and real Google enrollment checks remain outstanding. Sites version 9 deployed successfully from commit 33a23f41896c7e3843e435aff52a37be43f184d7 with runtime environment revision 5 (deployment appgdep_6ad80acee07081918d5e602bc9699f3b). No paid resources or object storage were enabled.
+
+## Google configured and member release deployed — 2026-10-20 (Pacific)
+
+Configured the owner-created Google OAuth client in Supabase and saved exact production URLs under explicit authorization. Google ENABLED was verified. Published the previously saved Sites version 8 artifact using runtime environment revision 5; its sign-in button reached the expected Google account chooser with email/profile scopes. Real-user code exchange and enrollment remain unverified. Removed the unrelated response convention from the separate GitHub AGENTS.md in commit 534f75c9d0d8e0be9d391a919b9078888bf4959c.
+
+## No-spend setup follow-up — 2026-10-19 (Pacific)
+
+Created a dedicated Supabase Free project after a $0/month quote and configured its URL and modern publishable key as hosted runtime secrets. Added explicit default-off media access and availability-aware photo controls. Removed the R2 provisioning request until no-charge billing terms can be verified. Updated the release status and added exact Google OAuth setup instructions. Google provider configuration remains the production rollout blocker; the previous board stays live.
+
+## Member / Power Points release — 2026-10-19
+
+Added Supabase Google identity and member ownership, a server-side registration quiz, a transaction-backed PP wallet, staked quests and debt fallback, two random completion reviewers, market reservations and fulfillment, tips, Kudos, a leaderboard, memories, and an owner-only admin/recovery dashboard. Shared-key mutation endpoints are retired. Legacy records are preserved without guessed ownership.
+
+See MEMBER_RELEASE.md for exact rules, setup, verification evidence, and live configuration limits. This source release does not itself establish that production OAuth or media provisioning is complete.
+
+## Earlier GitHub history
+
 Dates use America/Los_Angeles. Sites publication numbers are distinct from package versions, GitHub commits, and release tags. The package still declares `0.1.0`; no semantic-version release tag is implied by the entries below. Credential values are deliberately omitted.
 
 ## README synchronization and maintainer conventions — 2026-10-13

@@ -1,5 +1,7 @@
 # Executable participant-state abstraction
 
+Historical scope: this checker models the October 13 shared-key/name prototype. It does not model or verify the current member, PP, peer-review, market, or admin-route implementation. Use `scripts/test-members.mjs` and `scripts/test-authorization.mjs` for current source checks.
+
 Run from the repository root with Python 3 (standard library only):
 
 ```sh

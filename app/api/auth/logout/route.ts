@@ -1,8 +1,2 @@
-import { clearedSessionCookie } from "../../../../lib/auth";
-
-export async function POST() {
-  return Response.json(
-    { ok: true },
-    { headers: { "Set-Cookie": clearedSessionCookie(), "Cache-Control": "no-store" } }
-  );
-}
+import { handle } from "../../../../lib/server";
+export async function POST(request: Request) { return handle(request, async ctx => { await ctx.supabase.auth.signOut(); return Response.json({ok:true}); }); }

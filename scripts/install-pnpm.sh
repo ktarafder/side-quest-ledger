@@ -2,6 +2,13 @@
 set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Portable checkouts use the pinned Corepack manager without Linux-only lock tools.
+if [[ "$(uname -s)" != "Linux" ]]; then
+  cd "${script_dir}/.."
+  export COREPACK_HOME="${PWD}/.sites-runtime/corepack"
+  exec corepack pnpm install --frozen-lockfile
+fi
+
 if [[ "${SITES_ENV_READY:-}" != "1" ]]; then
   exec "${script_dir}/sites-env.sh" -- "$0" "$@"
 fi

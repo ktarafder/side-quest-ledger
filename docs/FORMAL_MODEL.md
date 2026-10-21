@@ -1,22 +1,40 @@
 # Side Quest Ledger: formal system model
 
-Baseline date: 2026-10-13, America/Los_Angeles. Application source: Sites commit `a64da21e0fd5ab0a1bcd4680220b94c4a7f73610`; equivalent application snapshot in GitHub commit `1c20d8ccad8d9a2608b3ea3ec30c820e1d463f2e`. Documentation does not change runtime behavior.
+**Current release:** Sites version 12, source `d6afeec2b321d001d8f72b387de80c0c8a96fb23`, deployed October 20, 2026 (Pacific). The scope and release semantics below describe that source. Sections 2–10 retain the October 13 prototype specification as historical evidence and are superseded for current behavior by [MEMBER_RELEASE.md](../MEMBER_RELEASE.md) and the current source. The executable model remains an abstraction of that historical prototype, not verification of the member/PP release.
+
+Historical baseline date: 2026-10-13, America/Los_Angeles. Application source: Sites commit `a64da21e0fd5ab0a1bcd4680220b94c4a7f73610`; equivalent application snapshot in GitHub commit `1c20d8ccad8d9a2608b3ea3ec30c820e1d463f2e`. Documentation does not change runtime behavior.
 
 This specification separates **implemented semantics**, **desired security properties**, and **proposed architecture**. It is a source-based model, not a proof that production satisfies every property. The executable finite-state abstraction and its limits are in [model/README.md](model/README.md).
 
 ## 1. Scope and system boundary
 
-The product is one shared board. Visitors unlock it with a shared key, choose a display name, create quests, and independently participate in quests. Completion earns a computed score; there is no wallet, payment, prize settlement, social-network integration, notification service, or AI agent in the running product. Repository coding agents are a separate development concern.
+The product is a friends-only quest board with verified Google identity through Supabase Auth, server-side group enrollment, durable member ownership, Power Points (PP), two-person completion review, a member market, tips, Kudos, memories, and an owner-only `/admin` dashboard. PP is an in-app point balance, not a real-money payment service. Quick capture, chat automation, and notification delivery are not included.
 
 ```mermaid
 flowchart TD
-  B["Browser: React, cookie, localStorage"] -->|"HTTPS requests"| W["Sites dispatch and Worker API"]
-  W -->|"Drizzle through DB binding"| D["D1: quests and participants"]
-  E["Runtime configuration: secrets"] --> W
-  G["GitHub and Sites publication"] -->|"Code and migrations"| W
+  B["Browser: board and admin routes"] -->|"HTTPS and session cookies"| W["Sites Worker API"]
+  W -->|"Verify Google identity"| A["Supabase Auth"]
+  W -->|"Membership and atomic batches"| D["D1: members, quests, PP journal"]
+  E["Runtime secrets and publisher"] --> W
 ```
 
-The browser renders the interface and caches a snapshot in React memory. The Worker executes server handlers. D1 is durable structured storage, accessed through `env.DB`; it is not a repository database file. The hosting manifest declares `d1: "DB"` and no R2 binding. GitHub contains code and schema, not the live board's records or runtime secrets.
+Supabase owns authentication; D1 under the existing `DB` binding stores application records. The browser supplies requested actions, never actor authority. The Worker verifies identity, active membership, owner permissions, and admin policy. Display names are labels. The hosting manifest retains its Site identity and `r2: null`; photo storage and object I/O remain disabled. GitHub holds application source and migrations, not runtime secrets, live data, or generated deployment archives. GitHub and Sites have separate histories and publication steps.
+
+### Current release semantics
+
+- Enrollment creates one member and one 100 PP welcome event after a three-question server challenge. Admin registration is restricted to the configured verified Google email; there is no first-user-admin rule.
+- Funded quests reserve 10–35 PP. An insufficient balance instead produces a 20 PP quest and a 20 PP debit, allowing debt. The first completion approved by both independent randomly assigned reviewers wins the pot; later completions may be verified without a second payout.
+- Interest and commitment are distinct. A reported scheduled no-show requires an admin-confirmed 10 PP fee. The submitter and quest owner are excluded from reviewer selection; fewer than two eligible reviewers leaves a submission waiting.
+- Tips and market reservations cannot normally overdraw. Purchases reserve PP until fulfillment/receipt, with cancellation/refund and audited admin recovery. Immutable journal events drive wallet balances; reversals append compensation.
+- Owner edits use revision checks. Commitments and checkout reject stale offers; listing restocks are additive. Soft deletion retains history and supports restoration. Legacy name-only attribution remains unowned until an audited assignment.
+- `/admin` has its own route. Admin data and mutations require server authorization: stored admin role, stored member email, and current verified Google email must match the configured owner. The member board does not fetch admin data.
+- Requests enforce same-origin JSON mutations, bounded bodies/fields/results, rate counters, and idempotency keys. These controls and local tests are not a complete production security assessment.
+
+The 128 domain/migration/permission/accounting checks, 12 owner-authorization checks, 11 local API boundary checks, TypeScript, and production build passed. Browser checks used isolated synthetic users; the live owner dashboard was observed read-only. Multi-user production review/market flows, session revocation guarantees, load capacity, and disaster recovery remain unverified. See [MEMBER_RELEASE.md](../MEMBER_RELEASE.md) for exact rules and limits.
+
+## Historical prototype specification
+
+The remaining numbered sections describe the October 13 shared-key/name prototype. Their “current” and “not implemented” statements apply to that historical baseline only.
 
 ## 2. Actors and identity domains
 

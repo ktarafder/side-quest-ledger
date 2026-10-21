@@ -1,8 +1,14 @@
 # Side Quest Ledger: threat model and security assessment
 
-Assessment date: 2026-10-13. Baseline: application behavior described in [FORMAL_MODEL.md](FORMAL_MODEL.md), GitHub application commit `1c20d8ccad8d9a2608b3ea3ec30c820e1d463f2e`, Sites source commit `a64da21e0fd5ab0a1bcd4680220b94c4a7f73610`.
+**Release update — October 20, 2026 (Pacific):** Sites version 12 introduces verified Google identity, group membership, server-side ownership, owner-bound admin access, an immutable PP journal, atomic/idempotent mutations, origin checks, bounded input/results, rate counters, and audited recovery. The current trust-boundary section below reflects these changes. The October 13 findings elsewhere in this document are historical findings and acceptance criteria; they are not a current vulnerability assessment of version 12. No claim of a security-hardened or penetration-tested deployment is made.
 
-**Assessment conclusion:** the current application is a shared-access prototype. It does not establish individual identity, enforce per-user ownership, or provide robust session revocation. It is not ready to hold sensitive personal data or support adversarial users under the stated requirement that security is of utmost importance. This document identifies work; it does not implement that work or certify the deployment.
+Current verification: 128 domain checks, 12 authorization checks, 11 isolated local API checks, TypeScript and production build passed. Ordinary and anonymous users were denied admin reads/mutations; a caller-supplied admin role could not authorize a balance adjustment. Local browser checks confirmed route denial. Current verified email is checked against both stored membership email and configured owner. See [MEMBER_RELEASE.md](../MEMBER_RELEASE.md) for implementation evidence and limits.
+
+Still unverified: provider/session revocation behavior, distributed rate-limit/load behavior, effective hosted CSP/framing policy, recovery RPO/RTO, dependency/security scanning, and full multi-user production review/market flows. The group quiz is an enrollment gate, not a secret credential; friends know its answers. The finite-state checker covers only the earlier prototype.
+
+Historical assessment date: 2026-10-13. Baseline: application behavior described in [FORMAL_MODEL.md](FORMAL_MODEL.md), GitHub application commit `1c20d8ccad8d9a2608b3ea3ec30c820e1d463f2e`, Sites source commit `a64da21e0fd5ab0a1bcd4680220b94c4a7f73610`.
+
+**Historical assessment conclusion:** the October 13 application is a shared-access prototype. It does not establish individual identity, enforce per-user ownership, or provide robust session revocation. It is not ready to hold sensitive personal data or support adversarial users under the stated requirement that security is of utmost importance. This document identifies work; it does not implement that work or certify the deployment.
 
 ## 1. Method, evidence, and scope
 
@@ -47,20 +53,21 @@ Quests can contain real locations, schedules, social relationships, or other per
 
 ```mermaid
 flowchart TD
-  U["Untrusted client: text, names, IDs"] -->|"Cookie admission boundary"| A["Worker API"]
-  A -->|"Parameterized SQL / DB capability"| D["D1 records"]
-  X["Third-party browser origin"] -->|"Cookie, origin, framing policy"| U
-  P["Publisher, GitHub, dependencies"] -->|"Build and deploy authority"| A
-  K["Operator secrets and hosting identity"] -->|"Privileged configuration"| A
+  U["Untrusted client: JSON and cookies"] -->|"Origin, identity, membership, ownership"| A["Worker API"]
+  A -->|"Server-verified Google identity"| S["Supabase Auth"]
+  A -->|"Parameterized SQL and atomic batches"| D["D1 records and PP journal"]
+  P["Publisher and runtime secrets"] -->|"Privileged configuration"| A
 ```
 
-1. **Client to API:** all JSON, query/resource identifiers, names, and browser storage are attacker-controlled. Authentication guards admission only. Authorization must not derive from these fields.
-2. **API to D1:** the Worker has database capability. D1 does not automatically know the app user or enforce owner policy. Prepared queries address injection, not unauthorized legitimate SQL operations.
-3. **Browser origins:** SameSite and same-origin restrictions provide real protection. They are distinct mechanisms and cannot be treated as a complete CSRF or XSS defense. Effective framing/CSP policy is unverified.
-4. **Hosting identity:** dispatch-provided identity can support a stronger design, but the current quest routes do not use it. Trust would depend on the platform stripping/replacing attacker-supplied identity headers and rejecting direct bypass routes.
-5. **Publication:** anyone able to alter deployed code or runtime secrets can cross all application trust boundaries. Public read access to GitHub is not deploy permission. GitHub and Sites publication are separate.
+The browser cannot grant roles by changing its name, local state, requested member ID, or an admin flag. Supabase `getUser` validates the identity; Google provider identity and confirmed email are required. Application membership and role checks run in the Worker for every protected request. `/api/admin` and all `admin_*` actions enforce authorization; hiding navigation is not the control. The `/admin` UI waits for the protected API and shows an access-only state to ordinary members.
 
-Explicit endpoints: public `POST /api/auth/login`, public `POST /api/auth/logout`, guarded GET/POST/PATCH/DELETE `/api/quests`, and the rendered board. Reserved platform sign-in endpoints are owned by dispatch, not implemented by this app. No application upload endpoint, arbitrary URL fetch, rich-HTML renderer, or outbound connector call is used by the board; do not invent SSRF/upload/agent capabilities that are absent.
+Public sign-in/callback endpoints establish a provider session; enrollment separately grants membership. `/api/me`, `/api/register`, `/api/board`, `/api/actions`, and `/api/admin` have distinct guards. Legacy `/api/quests` mutations are retired. `/api/media` and media reads are disabled without both the explicit feature flag and storage binding. Supabase Auth holds authentication data; D1 holds application records. Object storage is not provisioned. Secrets remain runtime-only and source publication does not expose live database contents.
+
+Third-party origins, same-origin malicious scripts, compromised sessions/dependencies, provider administration, and publication credentials remain separate threat surfaces. HttpOnly cookies and origin checks do not protect against all same-origin script or publisher compromise. GitHub push and Sites deployment remain independent authority boundaries.
+
+## Historical assessment details
+
+Sections 5–11 retain the October 13 prototype findings. Controls listed there must not be mistaken for an inventory of the current release.
 
 ## 5. Controls actually present
 

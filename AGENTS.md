@@ -12,10 +12,10 @@
 
 | Location | Responsibility |
 | --- | --- |
-| `app/page.tsx` | Client board, saved display name, quest forms/actions, filters and statistics |
+| `app/page.tsx`, `components/ledger.tsx`, `app/admin/page.tsx` | Member board, forms, PP, and separate owner admin route |
 | `app/globals.css` | Established aubergine/teal visual system and responsive layout |
-| `app/api/quests/route.ts` | Protected CRUD, participant transitions, legacy claim compatibility |
-| `app/api/auth/*/route.ts`, `lib/auth.ts` | Shared board key and cookie; no individual identity |
+| `app/api/board/route.ts`, `app/api/actions/route.ts`, `lib/domain.ts` | Scoped reads and atomic/idempotent quest, review, market, PP and admin actions; legacy quest mutations retired |
+| `app/api/auth/*/route.ts`, `lib/server.ts`, `lib/authorization.ts` | Supabase Google sessions, verified membership, current-email owner policy |
 | `db/index.ts`, `db/schema.ts` | Drizzle over the Worker `DB` D1 binding; schema declarations |
 | `drizzle/` | Ordered, append-only SQL migrations and metadata |
 | `.openai/hosting.json`, `build/`, `vite.config.ts` | Sites/Workers integration and binding declarations |
@@ -37,7 +37,7 @@ Runtime: React/TypeScript on Vinext/Vite and Cloudflare Workers, with D1 storage
 
 ## Implementation and verification
 
-Make the smallest change that fully addresses the request. Preserve the visual baseline and avoid global status-class selectors; use `.quest-card.claimed`, not bare `.claimed`. Keep the identity draft separate from the saved name. Preserve independent participation and completion for each quest participant.
+Make the smallest change that fully addresses the request. Preserve the visual baseline and avoid global status-class selectors; use `.quest-card.claimed`, not bare `.claimed`. Keep display names separate from authenticated identity. Preserve independent participation and completion for each quest participant.
 
 Use the package manager declared in `package.json`. For application changes, run `npx tsc --noEmit` and the supported build. For schema changes, run `npm run db:generate`, inspect SQL, and verify migration behavior on an isolated database. For behavioral/security changes, exercise failures and ownership boundaries, not only successful UI paths. Documentation-only changes need link/evidence checks and `python docs/model/check_model.py` if the model changes; they do not require a production deployment.
 

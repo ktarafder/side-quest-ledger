@@ -22,6 +22,20 @@
       "when": 1791920334115,
       "tag": "0002_greedy_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1792461022138,
+      "tag": "0003_cuddly_lizard",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1792543291007,
+      "tag": "0004_nifty_wraith",
+      "breakpoints": true
     }
   ]
 }
