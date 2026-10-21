@@ -1,6 +1,6 @@
 @font-face { font-family: "Barlow Quest"; src: url("/fonts/BarlowCondensed-Light.ttf") format("truetype"); font-weight: 300; font-style: normal; font-display: swap; }
 
-.signup-page { --signup-bg: #28172e; --signup-mint: #a5d8cb; --signup-muted: #a7b1ac; min-height: 100svh; color: var(--signup-mint); background: var(--signup-bg); padding: 0 clamp(24px,5.5vw,88px); position: relative; isolation: isolate; display: flex; flex-direction: column; }
+.signup-page { --signup-bg: var(--outer-canvas); --signup-mint: #a5d8cb; --signup-muted: #a7b1ac; min-height: 100svh; color: var(--signup-mint); background: var(--signup-bg); padding: 0 clamp(24px,5.5vw,88px); position: relative; isolation: isolate; display: flex; flex-direction: column; }
 .signup-page::before { content: ""; position: absolute; inset: 8px; border: 1px solid #a5d8cb26; pointer-events: none; z-index: -1; }
 .signup-page p, .signup-page figure { margin: 0; }
 .signup-page a { color: inherit; }
@@ -23,7 +23,6 @@
 .signup-page .signup-action { display: grid; gap: 28px; }
 .signup-page .login-button { align-self: auto; display: flex; justify-content: space-between; width: 100%; max-width: none; min-height: 58px; margin: 0; padding: 18px 22px; background: var(--signup-mint); color: var(--signup-bg); border: 1px solid var(--signup-mint); box-shadow: 5px 5px 0 #a5d8cb32; text-decoration: none; font-size: 11px; letter-spacing: .08em; transition: background .2s, box-shadow .2s, transform .2s; }
 .signup-page .login-button:hover { background: #c3e8df; box-shadow: 7px 7px 0 #a5d8cb32; transform: translate(-1px,-1px); }
-.signup-page .signup-action .helper { margin: 0; color: var(--signup-muted); font-size: 12px; line-height: 1.75; }
 .signup-art { min-width: 0; width: 100%; max-width: min(680px,calc(100svh - 230px)); justify-self: center; }
 .signup-art-frame { position: relative; aspect-ratio: 1; }
 .signup-art img { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; mask-image: linear-gradient(to right,transparent,#000 4%,#000 96%,transparent),linear-gradient(to bottom,transparent,#000 4%,#000 96%,transparent); mask-composite: intersect; }
@@ -36,8 +35,8 @@
 .signup-footer > p { font: 10px/1.5 monospace; letter-spacing: .08em; }
 .signup-footer em { font-style: normal; color: #e2ede6; }
 .signup-promises { display: flex; align-items: center; flex-wrap: wrap; gap: clamp(20px,3vw,50px); }
-.signup-promises > span { display: flex; align-items: center; gap: 9px; font: 8px/1.5 monospace; letter-spacing: .05em; }
-.signup-promises b { font-size: 20px; font-weight: 400; }
+.signup-promises > span { display: inline-flex; align-items: center; gap: 9px; font: 8px/1 monospace; letter-spacing: .05em; }
+.signup-promises svg { display: block; width: 18px; height: 18px; flex: none; stroke-width: 1.5; }
 .signup-footer-mark { font: 14px/1 serif; opacity: .7; }
 .signup-page .registration { margin: 0; }
 .signup-page .registration h2, .signup-page .signup-controls h2 { font-family: "Barlow Quest", sans-serif; font-weight: 300; font-size: 32px; line-height: 1.1; margin: 0; }

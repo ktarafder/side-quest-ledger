@@ -1,6 +1,6 @@
 # Side Quest Ledger
 
-The one-page entry screen uses an original engraved compass-and-mountain-portal illustration with mint teal on aubergine. It serves Google sign-in, group registration, and access/error states. Its button/helper grid enforces a 28 px gap. Barlow Condensed is self-hosted under its included SIL Open Font License in `public/fonts/`.
+The one-page entry screen uses an original engraved compass-and-mountain-portal illustration with mint teal on aubergine. It serves Google sign-in, group registration, and access/error states. The header credits Panoptic Engineering; the Google action has no helper copy beneath it. Footer SVG icons are centered with their labels, and the document canvas stays dark aubergine during overscroll. Barlow Condensed is self-hosted under its included SIL Open Font License in `public/fonts/`.
 
 A friends-only board with Supabase Google identity, Power Points, staked quests, two-person peer review, a member market, tips, Kudos, memories, and admin recovery.
 

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ArrowUpRight, Asterisk, CircleDot } from "lucide-react";
 
 function CompassSeal() {
   return <svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><circle cx="32" cy="32" r="26"/><circle cx="32" cy="32" r="19" strokeDasharray="1 4"/><path d="m32 4 5 23 23 5-23 5-5 23-5-23-23-5 23-5Z"/><path d="m32 16 3 13 13 3-13 3-3 13-3-13-13-3 13-3Z" fill="currentColor"/><circle cx="32" cy="32" r="3" fill="var(--signup-bg)"/></svg>;
@@ -8,7 +9,7 @@ export default function QuestGate({children,enrolling=false}:{children:ReactNode
   return <main className={"signup-page"+(enrolling?" signup-enrolling":"")}>
     <header className="signup-header">
       <a className="signup-brand" href="/" aria-label="Side Quest Ledger home"><CompassSeal/><span>SIDE QUEST<br/>LEDGER</span></a>
-      <span className="signup-edition">A FRIENDS-ONLY FIELD GUIDE<span>SEA / EST. 2026</span></span>
+      <span className="signup-edition">PANOPTIC ENGINEERING<span>SEA / EST. 2026</span></span>
       <span className="signup-header-note"><i/> REAL LIFE, GOOD COMPANY.</span>
     </header>
     <div className="signup-main">
@@ -25,7 +26,7 @@ export default function QuestGate({children,enrolling=false}:{children:ReactNode
     </div>
     <footer className="signup-footer">
       <p>BUILD A LIFE <em>OFFLINE.</em></p>
-      <div className="signup-promises"><span><b>↗</b> FIND YOUR NEXT QUEST</span><span><b>✳</b> EARN POWER POINTS</span><span><b>◎</b> KEEP THE GOOD STORIES</span></div>
+      <div className="signup-promises"><span><ArrowUpRight aria-hidden="true"/><span>FIND YOUR NEXT QUEST</span></span><span><Asterisk aria-hidden="true"/><span>EARN POWER POINTS</span></span><span><CircleDot aria-hidden="true"/><span>KEEP THE GOOD STORIES</span></span></div>
       <span className="signup-footer-mark" aria-hidden="true">支 / 侧线</span>
     </footer>
   </main>;

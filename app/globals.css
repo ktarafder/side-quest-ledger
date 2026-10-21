@@ -4,6 +4,7 @@
 
 :root {
   --paper: #f2e9e4;
+  --outer-canvas: #28172e;
   --ink: #2b1632;
   --aubergine: #5b2a5f;
   --teal: #0f766e;
@@ -17,8 +18,8 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Helvetica Neue", "PingFang SC", "Noto Sans SC", Arial, sans-serif; }
+html { scroll-behavior: smooth; background: var(--outer-canvas); }
+body { margin: 0; background: var(--outer-canvas); color: var(--ink); font-family: "Helvetica Neue", "PingFang SC", "Noto Sans SC", Arial, sans-serif; }
 button, input, textarea, select { font: inherit; }
 button { color: inherit; }
 

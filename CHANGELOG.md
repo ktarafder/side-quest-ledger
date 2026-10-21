@@ -1,5 +1,10 @@
 # Changelog
 
+## Studio label and footer alignment — 2026-10-21 (Pacific)
+
+At Kamrul’s direction, replaced the entry-screen field-guide label with Panoptic Engineering, removed the two helper lines beneath Google sign-in, and replaced footer text symbols with uniform 18 px SVG icons aligned to their text. The root document and body now use the same dark aubergine canvas as the entry screen, covering overscroll beyond its border. The illustration is unchanged for the next design iteration. TypeScript and production build pass; browser visual verification was unavailable in this session.
+
+
 ## Engraved sign-up page — 2026-10-20 (Pacific)
 
 Replaced the entry card with a single-page, teal-on-aubergine field-guide layout inspired by the owner's Hermes reference. Added original compass/friends/mountain-portal artwork, a compass seal, condensed display type, and a compact editorial footer. The Google action and helper now occupy separate grid rows with a fixed 28 px gap; phone layouts keep the action first and stack the artwork. Registration and access/error states share the new shell. Self-hosted the licensed Barlow Condensed font and illustration; no new provider services or paid resources were enabled. Member board and auth rules are unchanged.
