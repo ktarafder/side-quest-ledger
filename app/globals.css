@@ -288,3 +288,7 @@ td small { display: block; margin-top: 6px; color: var(--muted); line-height: 1.
 .section-nav a, .section-nav > span { padding: 18px 20px; flex: none; }
 .admin-entry { display: flex; justify-content: flex-end; padding: 12px clamp(18px, 4vw, 56px); }
 .section-nav a:hover, .admin-entry a:hover { text-decoration: underline; }
+
+.account-danger { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 8px; }
+.account-danger p { margin: 0 0 16px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.account-danger button { border: 1px solid var(--aubergine); color: var(--aubergine); background: transparent; padding: 12px 16px; min-height: 44px; font: 700 10px/1.5 monospace; cursor: pointer; }

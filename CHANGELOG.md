@@ -1,5 +1,11 @@
 # Changelog
 
+## Self-service account deletion — 2026-10-21 (Pacific)
+
+Added account settings → DELETE MY ACCOUNT with typed confirmation, atomic D1 closure/anonymization, archived owned items, immutable PP retirement, obligation blockers, and a caller-authenticated Supabase Edge Function that revokes sessions and removes the app Auth user. Provider failures offer a finish-deletion retry. Re-registration repeats Google and the group quiz; a secret email HMAC prevents another starter grant. Shared records stay under Deleted member. Migration 0005 appends claim/closure tables. No paid resources or plan upgrades were enabled; media stays disabled.
+
+Validation: 67 isolated deletion/security/accounting checks, 44 synthetic local HTTP flow checks, existing 128 domain checks, 12 owner checks, TypeScript and production build pass. The deployed function rejects unauthenticated requests with 401. No production account was deleted; live provider revocation and browser visuals remain unverified. Sites version 15 deployed successfully from `febf0ca5809b5a12f594aac2b7f80df93abf1942`, runtime revision 6; Supabase function version 1 is active. Full behavior and configuration: [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md).
+
 ## Studio label and footer alignment — 2026-10-21 (Pacific)
 
 At Kamrul’s direction, replaced the entry-screen field-guide label with Panoptic Engineering, removed the two helper lines beneath Google sign-in, and replaced footer text symbols with uniform 18 px SVG icons aligned to their text. The root document and body now use the same dark aubergine canvas as the entry screen, covering overscroll beyond its border. The illustration is unchanged for the next design iteration. TypeScript and production build pass; browser visual verification was unavailable in this session.

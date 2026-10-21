@@ -49,3 +49,7 @@ Sites version 8 deployed successfully using runtime environment revision 5, from
 Mac source synchronization previously failed because that executor could not resolve public hostnames and denied loopback sockets. Those unsynchronized edits were unavailable in the subsequent Linux session. The saved version 8 source was restored from the canonical Sites Git remote; the next feature batch and its 128-check suite were recovered from the conversation and revalidated. HTTPS Git access works through the new session's configured proxy. Sites version 9 subsequently deployed successfully from recovered source commit 33a23f41896c7e3843e435aff52a37be43f184d7, retaining runtime environment revision 5. See MEMBER_RELEASE.md and CHANGELOG.md for details and verification limits.
 
 GitHub and Sites have separate histories. The unrelated response convention was removed from GitHub AGENTS.md in commit 534f75c9d0d8e0be9d391a919b9078888bf4959c. A Sites publication does not automatically synchronize the GitHub application snapshot.
+
+## Testing enrollment again
+
+Use the member header’s account settings → DELETE MY ACCOUNT, then type DELETE. This removes this app’s Supabase Google-auth user, never the Google account itself. Sign in again and answer the group questions. Re-registering does not issue a second starter grant. See [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md).

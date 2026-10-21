@@ -26,9 +26,11 @@ flowchart TD
 
 Supabase owns authentication; D1 under the existing `DB` binding stores application records. The browser supplies requested actions, never actor authority. The Worker verifies identity, active membership, owner permissions, and admin policy. Display names are labels. The hosting manifest retains its Site identity and `r2: null`; photo storage and object I/O remain disabled. GitHub holds application source and migrations, not runtime secrets, live data, or generated deployment archives. GitHub and Sites have separate histories and publication steps.
 
+Account deletion (October 21, 2026): authenticated members can close their own account with typed confirmation. An atomic D1 closure anonymizes structured identity, archives owned items and retires unused PP through compensating events. A caller-authenticated Supabase Edge Function checks the fixed Worker readiness endpoint, revokes sessions and removes only its validated caller. Pending obligations prevent closure. Shared history remains; a secret email HMAC prevents repeat starter grants. Provider failures expose an idempotent finish-deletion state. See [ACCOUNT_DELETION.md](../ACCOUNT_DELETION.md) for exact retention and verification limits.
+
 ### Current release semantics
 
-- Enrollment creates one member and one 100 PP welcome event after a three-question server challenge. Admin registration is restricted to the configured verified Google email; there is no first-user-admin rule.
+- First enrollment creates one member and one 100 PP welcome event; rejoining after deletion with the same normalized verified email receives no additional grant. Enrollment completes after a three-question server challenge. Admin registration is restricted to the configured verified Google email; there is no first-user-admin rule.
 - Funded quests reserve 10–35 PP. An insufficient balance instead produces a 20 PP quest and a 20 PP debit, allowing debt. The first completion approved by both independent randomly assigned reviewers wins the pot; later completions may be verified without a second payout.
 - Interest and commitment are distinct. A reported scheduled no-show requires an admin-confirmed 10 PP fee. The submitter and quest owner are excluded from reviewer selection; fewer than two eligible reviewers leaves a submission waiting.
 - Tips and market reservations cannot normally overdraw. Purchases reserve PP until fulfillment/receipt, with cancellation/refund and audited admin recovery. Immutable journal events drive wallet balances; reversals append compensation.
@@ -59,6 +61,8 @@ flowchart TD
 See [STATE_OF_THE_UNION.md](STATE_OF_THE_UNION.md), [formal model](docs/FORMAL_MODEL.md), and [threat model](docs/THREAT_MODEL.md) for current scope, historical evidence, and verification limits. Generated sections are maintained with `pnpm docs:sync` and `pnpm docs:check`.
 
 The starter reference below describes infrastructure rather than the app's active identity provider.
+
+Account settings include self-service deletion for testing Google sign-in and group enrollment again. Shared history is retained as “Deleted member”; repeat registration does not issue another starter grant. See [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md) for behavior, configuration, retries, and checks.
 
 ## Starter infrastructure reference
 

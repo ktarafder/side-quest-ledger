@@ -67,6 +67,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
     try {
       const me=await api("/api/me");
       if(!me.configured) {setStage("setup");return;}
+      if(me.deleting){setStage("deleting");return;}
       if(!me.member) {setStage("register");return;}
       if(me.member.status!=="active"){setStage("blocked");return;}
       await reload();
@@ -96,12 +97,13 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
       else if(m.kind==="edit_listing") await act({op:"edit_listing",listingId:m.item!.id,revision:m.item!.revision,title:values.title,description:values.description,price:Number(values.price),addStock:Number(values.addStock||0)});
       else if(m.kind==="story") {const assetId=await upload(data.get("photo") as File);await act({op:"submit",questId:m.item!.id,story:values.story,assetId});}
       else if(m.kind==="tip") await act({op:"tip",memberId:values.memberId,amount:Number(values.amount),note:values.note});
+      else if(m.kind==="delete_account") {await api("/api/account/delete",{method:"POST",body:JSON.stringify({confirmation:values.confirmation})});setBoard(null);setAdmin(null);setQuiz(null);setArchivePage(0);setModal(null);requests.current.clear();setStage("signin");}
       else if(m.kind==="rename") await act({op:"rename",name:values.name});
       else if(m.kind==="reject") await act({op:"review",submissionId:m.item!.submission_id,decision:"reject",note:values.note});
       else if(m.kind==="admin") await act({op:m.op,...m.params,reason:values.reason,...(m.op==="admin_adjust"?{memberId:values.memberId,amount:Number(values.amount)}:{}),...(m.op==="admin_assign_legacy"?{memberId:values.memberId}:{})});
       else if(m.kind==="buy") await act({op:"buy",listingId:m.item!.id,expectedPrice:m.item!.price,revision:m.item!.revision});
       else if(m.kind==="delete") await act({op:"delete_quest",questId:m.item!.id});
-    }catch(err){setError(err instanceof Error?err.message:"Could not save this.");}finally{setBusy(false);}
+    }catch(err){setError(err instanceof Error?err.message:"Could not save this.");}finally{if(modal?.kind==="delete_account"){setModal(null);await boot();}setBusy(false);}
   }
   async function getQuiz() {setBusy(true);setError("");try{setQuiz(await api("/api/register"));}catch(err){setError(err instanceof Error?err.message:"Could not load questions.");}finally{setBusy(false);}}
   async function register(event:FormEvent<HTMLFormElement>) {
@@ -122,6 +124,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
       </form>}
     </div>}
     {stage==="forbidden" && <><h2>Admin access only.</h2><p className="gate-copy">This dashboard is only available to Kamrul’s admin account.</p><a className="submit-button" href="/">BACK TO THE LEDGER</a></>}
+    {stage==="deleting"&&<div className="registration"><h2>Finish deleting your account.</h2><p>Your ledger profile is closed. Confirm once more to retry removing your Google sign-in account from this app.</p><form className="enrollment-form" onSubmit={async event=>{event.preventDefault();setBusy(true);setError("");try{await api("/api/account/delete",{method:"POST",body:JSON.stringify({confirmation:new FormData(event.currentTarget).get("confirmation")})});setQuiz(null);await boot();}catch(err){setError(err instanceof Error?err.message:"Could not finish deleting.");await boot();}finally{setBusy(false);}}}><label>Type DELETE to confirm<input name="confirmation" required pattern="DELETE" autoComplete="off"/></label><button className="submit-button" disabled={busy}>FINISH DELETION</button></form></div>}
     {stage==="blocked" && <p>Your membership is paused. Contact Kamrul.</p>}
     {stage==="error" && <button className="submit-button" onClick={()=>void boot()}>TRY AGAIN</button>}
     {error&&<p className="error-line" role="alert">{error}</p>}
@@ -131,7 +134,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
     <header className="topbar">
       <a className="brand" href={adminPage?"/":"#top"}><span>支</span><div>SIDE QUEST<br/>LEDGER</div></a>
       <div className="week-signal"><i/><span className="membership-label">FRIENDS ONLY</span><b>{pp(person.balance)}</b></div>
-      <div className="user-controls"><button className="user-badge" title="Change display name" onClick={()=>setModal({kind:"rename"})}><span>{person.name}</span></button>
+      <div className="user-controls"><button className="user-badge" title="Account settings" aria-label="Account settings" onClick={()=>setModal({kind:"rename"})}><span>{person.name}</span></button>
       <button className="icon-button" title="Sign out" aria-label="Sign out" onClick={async()=>{await api("/api/auth/logout",{method:"POST",body:"{}"});setBoard(null);setAdmin(null);setStage("signin");}}><LogOut size={16}/></button></div>
     </header>
     {!adminPage&&<><section className="stats-strip" aria-label="Board stats">
@@ -217,7 +220,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
     </section>}
 
     <footer className="site-footer"><span>BUILD A LIFE OFFLINE.</span><span>MORE STORIES. GOOD COMPANY.</span></footer>
-    {modal&&<Modal title={modal.title||({quest:"Plant a side quest",edit_quest:"Edit quest details",listing:"Put it on the market",edit_listing:"Edit & restock",story:"Come back with a story",tip:"Tip a friend",rename:"What should we call you?",reject:"Request changes",buy:"Make it yours",delete:"Archive this quest?"}[modal.kind]||"Make a change")} onClose={()=>{if(!busy){setModal(null);setError("");}}}>
+    {modal&&<Modal title={modal.title||({quest:"Plant a side quest",edit_quest:"Edit quest details",listing:"Put it on the market",edit_listing:"Edit & restock",story:"Come back with a story",tip:"Tip a friend",rename:"Your account",delete_account:"Delete your account?",reject:"Request changes",buy:"Make it yours",delete:"Archive this quest?"}[modal.kind]||"Make a change")} onClose={()=>{if(!busy){setModal(null);setError("");}}}>
       <form className="ledger-form" onSubmit={submitModal}>
       {["quest","edit_quest"].includes(modal.kind)&&<>
         <label>QUEST NAME<input name="title" maxLength={100} defaultValue={modal.item?.title} required autoFocus/></label>
@@ -238,7 +241,8 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
       </>}
       {modal.kind==="story"&&<><p>{modal.item!.title}</p><label>WHAT HAPPENED?<textarea name="story" maxLength={2000} required autoFocus placeholder="Tell the reviewers what you did."/></label>{board.mediaEnabled?<label>PHOTO (OPTIONAL)<input name="photo" type="file" accept="image/jpeg,image/png,image/webp"/></label>:<p className="helper">Photos are not available yet. You can still post without one.</p>}<p className="helper">Two other members are assigned randomly. Both must approve. You can still be verified after someone else wins the pot.</p></>}
       {modal.kind==="tip"&&<><label>FRIEND<select name="memberId" defaultValue={modal.item?.id} required>{board.leaderboard.filter(m=>m.id!==person.id).map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select></label><label>PP<input name="amount" type="number" min={1} max={Math.min(10000,person.balance)} required/></label><label>A NOTE (OPTIONAL)<input name="note" maxLength={200}/></label></>}
-      {modal.kind==="rename"&&<label>YOUR DISPLAY NAME<input name="name" defaultValue={person.name} maxLength={40} required autoFocus/></label>}
+      {modal.kind==="rename"&&<><label>YOUR DISPLAY NAME<input name="name" defaultValue={person.name} maxLength={40} required autoFocus/></label><div className="account-danger"><p>Deleting your account signs you out and lets you go through onboarding again.</p><button type="button" disabled={busy} onClick={()=>{setError("");setModal({kind:"delete_account"});}}>DELETE MY ACCOUNT</button></div></>}
+      {modal.kind==="delete_account"&&<><p>This removes your profile and this app’s Google sign-in account. Shared quest, purchase, and PP history stays under “Deleted member.” You can sign up again and answer the group questions; you won’t receive a second 100 PP starter grant.</p><p>Pending purchases, debt, and unresolved scheduled commitments must be settled first. Your unused PP and unclaimed quest pots are retired.</p><label>TYPE DELETE TO CONFIRM<input name="confirmation" required pattern="DELETE" autoComplete="off" autoFocus/></label></>}
       {modal.kind==="reject"&&<label>WHAT NEEDS TO CHANGE?<textarea name="note" maxLength={500} required autoFocus/></label>}
       {modal.kind==="buy"&&<><p><b>{modal.item!.title}</b> · {pp(modal.item!.price)}</p><p>This reserves the price now. Confirm receipt to release it to {modal.item!.owner_name}.</p></>}
       {modal.kind==="delete"&&<p>The quest will leave the board. Its history and reserved pot stay intact, and Kamrul can restore it.</p>}
@@ -249,7 +253,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
         <label>REASON<textarea name="reason" maxLength={500} required autoFocus/></label>
       </>}
       {error&&<p className="error-line" role="alert">{error}</p>}
-      <button className="submit-button" disabled={busy}>{busy?"SAVING…":modal.kind==="quest"?"STAKE & POST":modal.kind==="buy"?"RESERVE "+pp(modal.item!.price):"CONFIRM"} <ArrowUpRight size={18}/></button>
+      <button className="submit-button" disabled={busy}>{busy?"SAVING…":modal.kind==="quest"?"STAKE & POST":modal.kind==="buy"?"RESERVE "+pp(modal.item!.price):modal.kind==="delete_account"?"DELETE MY ACCOUNT":modal.kind==="rename"?"SAVE":"CONFIRM"} <ArrowUpRight size={18}/></button>
       </form>
     </Modal>}
   </main>;

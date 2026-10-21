@@ -7,6 +7,7 @@ declare namespace Cloudflare {
     SESSION_SECRET?: string;
     SUPABASE_URL?: string;
     SUPABASE_PUBLISHABLE_KEY?: string;
+    ACCOUNT_HASH_SECRET?: string;
     ADMIN_EMAIL?: string;
     GROUP_QUIZ_JSON?: string;
   }

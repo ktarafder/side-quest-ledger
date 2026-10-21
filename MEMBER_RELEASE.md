@@ -1,8 +1,12 @@
 # Member release — implementation and setup
 
-Current status (October 20, 2026, Pacific): Sites version 12 is live from `d6afeec2b321d001d8f72b387de80c0c8a96fb23`. The owner enrolled and its admin dashboard was observed read-only. Current checks pass: 128 domain checks, 12 authorization checks, 11 local API access checks, TypeScript, and production build. Earlier counts and “unverified” rollout notes below are historical; multi-member production flows, cross-session persistence, and a production recovery drill remain unverified.
+Current status (October 21, 2026, Pacific): Sites version 15 is live from `febf0ca5809b5a12f594aac2b7f80df93abf1942`, runtime revision 6; Supabase deletion function version 1 is active. The owner previously enrolled and its dashboard was observed read-only. The new deletion flow passed 67 isolated and 44 local HTTP checks, alongside 128 domain checks, 12 authorization checks, TypeScript and production build. No production account was deleted; real-provider revocation and browser visuals remain unverified. Earlier release notes below remain historical.
 
 Implemented October 19, 2026 (Pacific); Sites version 8 deployed October 20, 2026 (Pacific). Google provider and exact callback configuration are saved. The production sign-in button reached Google; real-user code exchange, enrollment, and a production recovery drill remain unverified.
+
+## Self-service account deletion — October 21, 2026 (Pacific)
+
+The header display-name button opens account settings with a typed-confirmation deletion flow. The D1 profile is closed atomically, shared history is anonymized, unused PP is retired through journal events, and the Supabase Auth user is removed by a caller-authenticated Edge Function. Pending obligations block deletion. A failed provider call has an explicit finish-deletion retry screen. Rejoining repeats Google sign-in and the group quiz without another 100 PP grant. See [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md) for retention, deployment, and verification. No paid resource or upgrade was added.
 
 ## Quest/market editing and reviewer recovery — October 20, 2026 (Pacific)
 
@@ -25,7 +29,7 @@ The earlier release's 78 HTTP and browser checks below are historical evidence; 
 
 Kamrul selected Supabase with Google, first verified finisher wins, and a 10 PP confirmed no-show fee. Quick capture is excluded. The current aubergine/teal design remains the baseline.
 
-- Every enrolled Google identity receives 100 PP exactly once.
+- Every new enrolled member receives 100 PP once. Re-registering with the same normalized verified email after account deletion starts at 0 PP; a secret HMAC claim prevents repeated starter grants.
 - Funded quests reserve 10–35 PP. If the creator cannot cover the requested stake, the quest is worth 20 PP and the balance is debited 20 even below zero.
 - The first submission approved by two assigned independent reviewers wins the single pot. Other committed participants may record verified completions for the archive without another payout.
 - Reviewer assignment uses a cryptographic shuffle; the submitter and quest creator are excluded. With fewer than two eligible members, the submission waits. New enrollment and an admin action fill empty slots without lowering the threshold.

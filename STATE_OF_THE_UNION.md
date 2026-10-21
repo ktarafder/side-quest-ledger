@@ -1,14 +1,16 @@
 # Side Quest Ledger: state of the union
 
-As of October 20, 2026, America/Los_Angeles. This is a source and verification snapshot, not a security certification.
+As of October 21, 2026, America/Los_Angeles. This is a source and verification snapshot, not a security certification.
 
 ## Current release and publication
 
-The member/PP application is live at https://side-quest-ledger.dreamycedar64.chatgpt.site. Sites version 12 was deployed successfully from source `d6afeec2b321d001d8f72b387de80c0c8a96fb23`, deployment `appgdep_6ad81163f57c81919df783be1fb27590`, runtime environment revision 5. The public GitHub repository is https://github.com/ktarafder/side-quest-ledger. This synchronization brings the current application source into GitHub while preserving its documentation, model checker, and README synchronization workflow. GitHub and Sites have different histories; a GitHub push does not publish the site.
+The member/PP application is live at https://side-quest-ledger.dreamycedar64.chatgpt.site. Sites version 15 deployed successfully on October 21, 2026 (Pacific), from source `febf0ca5809b5a12f594aac2b7f80df93abf1942`, deployment `appgdep_6ad90105df588191a731273d32ff2dda`, runtime environment revision 6. Supabase function `delete-ledger-account` version 1 is active. The public GitHub repository is https://github.com/ktarafder/side-quest-ledger. GitHub and Sites have separate histories and publication steps.
+
+Account deletion update (October 21): self-service deletion, a finish-deletion retry screen, retained anonymous shared history, PP retirement, obligation checks, and repeat-grant prevention are implemented. Supabase function `delete-ledger-account` is deployed; Sites version 15 is live. The new flow passes 67 isolated checks and 44 synthetic local HTTP checks. No real production account was deleted. See [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md).
 
 ## Implemented behavior
 
-- Supabase Google identity, a server-side three-question enrollment challenge, durable members, owner-bound admin permissions, and 100 PP issued once on enrollment. Names are display labels, never ownership keys. There is no first-user-admin bootstrap.
+- Supabase Google identity, a server-side three-question enrollment challenge, durable members, owner-bound admin permissions, and 100 PP issued once on first enrollment (0 PP on rejoining after deletion with the same verified email). Names are display labels, never ownership keys. There is no first-user-admin bootstrap.
 - Funded 10–35 PP quests and the approved 20 PP debt fallback. Interest and commitment are separate. Reported scheduled no-shows require admin confirmation before a 10 PP penalty.
 - Two randomly assigned independent reviewers must approve completion. The first verified finisher wins the reserved pot; later completions can be verified without another payout. When too few reviewers exist, submissions wait. Admins can fill slots or replace a pending reviewer.
 - Member-priced market listings, reservation/fulfillment/receipt/refund flows, revision-checked checkout, owner edits, and additive restocking.
@@ -20,9 +22,9 @@ See [MEMBER_RELEASE.md](MEMBER_RELEASE.md) for exact rules and [GOOGLE_AUTH_SETU
 
 ## Architecture and cost boundary
 
-Vinext/Vite builds React/TypeScript into a Sites Cloudflare Worker. Supabase Auth verifies Google identities. D1 under the existing `DB` binding stores members, quests, attendance, reviews/submissions, market records, PP events, audit entries, and counters. `components/ledger.tsx` shares UI behavior between `/` and `/admin`; authorization lives in `lib/server.ts`, `lib/authorization.ts`, and server mutation rules.
+Vinext/Vite builds React/TypeScript into a Sites Cloudflare Worker. Supabase Auth verifies Google identities. A Supabase Edge Function validates a caller and confirmed Worker-side closure before revoking sessions and removing the same app Auth user; its privileged key stays in Supabase. D1 under the existing `DB` binding stores members, quests, attendance, reviews/submissions, market records, PP events, audit entries, and counters. `components/ledger.tsx` shares UI behavior between `/` and `/admin`; authorization lives in `lib/server.ts`, `lib/authorization.ts`, and server mutation rules.
 
-Existing migrations are retained and migrations 0003/0004 append member/PP records and revision support. Legacy name-only records are preserved without guessed ownership. Runtime secrets include `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAIL`, `GROUP_QUIZ_JSON`, and `MEDIA_STORAGE_ENABLED`; their values are not committed. The Google client secret belongs only in Supabase provider configuration.
+Existing migrations are retained and migrations 0003/0004/0005 append member/PP records, revision support, and account closure/welcome claims. Legacy name-only records are preserved without guessed ownership. Runtime secrets include `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAIL`, `GROUP_QUIZ_JSON`, `ACCOUNT_HASH_SECRET`, and `MEDIA_STORAGE_ENABLED`; their values are not committed. The Google client secret belongs only in Supabase provider configuration.
 
 Supabase remains Free. The hosting manifest retains its Site identity, `d1: "DB"`, and `r2: null`. Media is explicitly disabled and no paid object storage or other paid resources were enabled. Runtime data, environment files, local fixtures, build output, caches, and publishing archives stay out of GitHub.
 

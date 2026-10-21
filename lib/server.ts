@@ -30,8 +30,8 @@ export function context(request: Request) {
   return { request, supabase, pending };
 }
 export type Context = ReturnType<typeof context>;
-export async function identity(ctx: Context) {
-  const { data, error } = await ctx.supabase.auth.getUser();
+export async function identity(ctx: Context, token?:string) {
+  const { data, error } = await ctx.supabase.auth.getUser(token);
   if (error || !data.user?.email || !data.user.email_confirmed_at || !data.user.identities?.some(x => x.provider === "google")) throw new AppError("Please sign in with Google.", 401);
   return data.user;
 }

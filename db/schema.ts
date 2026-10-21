@@ -107,3 +107,10 @@ export const auditEvents = sqliteTable("audit_events", {
   id: text("id").primaryKey(), actorId: text("actor_id").notNull(), action: text("action").notNull(),
   targetId: text("target_id").notNull(), reason: text("reason").notNull(), createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const accountDeletions = sqliteTable("account_deletions", {
+  authId: text("auth_id").primaryKey(), createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+export const welcomeClaims = sqliteTable("welcome_claims", {
+  fingerprint: text("fingerprint").primaryKey(), createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});

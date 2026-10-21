@@ -28,6 +28,7 @@ async function commit(db: D1Database, actor: Actor, key: string, body: Row, stat
   try {
     await db.batch([
       prepare(db,query("INSERT INTO commands(id,actor_id,digest,response) VALUES(?,?,?,?)",commandId,actor.id,hash,JSON.stringify(response))),
+      prepare(db,check("EXISTS(SELECT 1 FROM members WHERE id=? AND status='active')",actor.id)),
       ...statements.map(q=>prepare(db,q)),
       db.prepare("DELETE FROM operation_checks"),
     ]);
@@ -42,7 +43,7 @@ export async function assignReviews(db: D1Database, submissionId?: string) {
   const pending = await many(db,"SELECT s.*,q.owner_id FROM submissions s JOIN quests q ON q.id=s.quest_id WHERE s.status='pending' AND q.deleted_at IS NULL AND (SELECT COUNT(*) FROM reviews r WHERE r.submission_id=s.id)<2"+(submissionId?" AND s.id=?":"")+" LIMIT 100",...(submissionId?[submissionId]:[]));
   for(const s of pending) {
     const eligible = shuffled(await many(db,"SELECT id FROM members WHERE status='active' AND id<>? AND id<>COALESCE(?,'') AND id NOT IN(SELECT reviewer_id FROM reviews WHERE submission_id=?)",s.member_id,s.owner_id,s.id));
-    const statements = eligible.slice(0,2).map(person=>prepare(db,query("INSERT OR IGNORE INTO reviews(id,submission_id,reviewer_id) SELECT ?,?,? WHERE (SELECT COUNT(*) FROM reviews WHERE submission_id=?)<2",crypto.randomUUID(),s.id,person.id,s.id)));
+    const statements = eligible.slice(0,2).map(person=>prepare(db,query("INSERT OR IGNORE INTO reviews(id,submission_id,reviewer_id) SELECT ?,?,? WHERE (SELECT COUNT(*) FROM reviews WHERE submission_id=?)<2 AND EXISTS(SELECT 1 FROM members WHERE id=? AND status='active') AND EXISTS(SELECT 1 FROM submissions s JOIN quests q ON q.id=s.quest_id WHERE s.id=? AND s.status='pending' AND q.deleted_at IS NULL)",crypto.randomUUID(),s.id,person.id,s.id,person.id,s.id)));
     if(statements.length) await db.batch(statements);
   }
 }

@@ -1,3 +1,4 @@
+import { accountFingerprint } from "../../../lib/account";
 import { registrationRole } from "../../../lib/authorization";
 import { env } from "cloudflare:workers";
 import { database, handle, identity, jsonBody, rateLimit } from "../../../lib/server";
@@ -26,6 +27,7 @@ export async function POST(request: Request) {
   return handle(request,async ctx=>{
     const user=await identity(ctx), db=database(), body=await jsonBody(request);
     await rateLimit("quiz-attempt:"+user.id,10);
+    if(await db.prepare("SELECT auth_id FROM account_deletions WHERE auth_id=?").bind(user.id).first()) throw new AppError("Finish deleting your account, then sign in with Google again.",409);
     const existing=await db.prepare("SELECT id FROM members WHERE auth_id=?").bind(user.id).first();
     if(existing) return Response.json({ok:true});
     const id=text(body.challengeId,80), name=text(body.name,40), challenge=await db.prepare("SELECT * FROM quiz_challenges WHERE id=? AND auth_id=? AND used=0 AND expires_at>?").bind(id,user.id,Date.now()).first<{question_ids:string;attempts:number}>();
@@ -39,10 +41,13 @@ export async function POST(request: Request) {
     });
     if(!correct) throw new AppError("Those answers didn't all match. Try again.");
     const email=user.email!.trim().toLowerCase(), role=registrationRole(email,env.ADMIN_EMAIL);
+    const fingerprint=await accountFingerprint(email,env.ACCOUNT_HASH_SECRET||"");
     await db.batch([
+      db.prepare("INSERT INTO operation_checks(ok) SELECT CASE WHEN NOT EXISTS(SELECT 1 FROM account_deletions WHERE auth_id=?) THEN 1 ELSE 0 END").bind(user.id),
       db.prepare("INSERT INTO operation_checks(ok) SELECT CASE WHEN EXISTS(SELECT 1 FROM quiz_challenges WHERE id=? AND used=0 AND attempts<=3 AND expires_at>?) THEN 1 ELSE 0 END").bind(id,Date.now()),
       db.prepare("INSERT INTO members(id,auth_id,email,name,role) VALUES(?,?,?,?,?)").bind(user.id,user.id,email,name,role),
-      db.prepare("INSERT INTO pp_events(id,kind,actor_id,to_id,amount,reason) VALUES(?,'welcome',?,?,100,'Starting PP')").bind("welcome:"+user.id,user.id,user.id),
+      db.prepare("INSERT INTO pp_events(id,kind,actor_id,to_id,amount,reason) SELECT ?,'welcome',?,?,100,'Starting PP' WHERE NOT EXISTS(SELECT 1 FROM welcome_claims WHERE fingerprint=?)").bind("welcome:"+user.id,user.id,user.id,fingerprint),
+      db.prepare("INSERT OR IGNORE INTO welcome_claims(fingerprint) VALUES(?)").bind(fingerprint),
       db.prepare("UPDATE quiz_challenges SET used=1 WHERE id=?").bind(id),
       db.prepare("DELETE FROM operation_checks"),
     ]);
