@@ -1,5 +1,12 @@
 # Changelog
 
+## Engraved sign-up page — 2026-10-20 (Pacific)
+
+Replaced the entry card with a single-page, teal-on-aubergine field-guide layout inspired by the owner's Hermes reference. Added original compass/friends/mountain-portal artwork, a compass seal, condensed display type, and a compact editorial footer. The Google action and helper now occupy separate grid rows with a fixed 28 px gap; phone layouts keep the action first and stack the artwork. Registration and access/error states share the new shell. Self-hosted the licensed Barlow Condensed font and illustration; no new provider services or paid resources were enabled. Member board and auth rules are unchanged.
+
+Checked sign-in at 320, 390, 768, 1280, and 1512 px: no horizontal overflow; the Google button/helper gap is 28 px. Desktop/laptop sign-in fits one viewport at 1512×740 and 1280×720. Group registration was checked at 320, 390, 768, and 1512 px with local synthetic questions: inputs fit and the registration action gap remains 16 px. Font and artwork were confirmed to load. TypeScript and production build pass.
+
+
 ## GitHub source synchronization — 2026-10-20 (Pacific)
 
 Synchronized the tested Sites version 12 application source, member/PP migrations, Google setup notes, formatting fixes, banner removal, and separate admin route into the public GitHub repository. Preserved repository documentation and README synchronization automation, updated current scope, and labeled the earlier executable model and assessment as historical. Retired the obsolete shared-key auth module. Runtime secrets, data, fixtures, build outputs, and deployment archives are excluded. This GitHub update does not redeploy Sites.

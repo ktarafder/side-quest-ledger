@@ -1,5 +1,7 @@
 # Side Quest Ledger
 
+The one-page entry screen uses an original engraved compass-and-mountain-portal illustration with mint teal on aubergine. It serves Google sign-in, group registration, and access/error states. Its button/helper grid enforces a 28 px gap. Barlow Condensed is self-hosted under its included SIL Open Font License in `public/fonts/`.
+
 A friends-only board with Supabase Google identity, Power Points, staked quests, two-person peer review, a member market, tips, Kudos, memories, and admin recovery.
 
 See [MEMBER_RELEASE.md](MEMBER_RELEASE.md) for current behavior, required live configuration, and validation. The member release is live with Supabase Google and exact callbacks configured. Real-user enrollment remains unverified; see [GOOGLE_AUTH_SETUP.md](GOOGLE_AUTH_SETUP.md). The latest batch adds quest editing, revision-checked commitments, listing edits/restocking, protected checkout, and admin reviewer replacement. It passes 128 domain checks, TypeScript, and the production build; deployment details are in MEMBER_RELEASE.md. Photo storage is disabled to honor the strict $0 requirement.

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import QuestGate from "./quest-gate";
 import { ArrowUpRight, Plus, X, Check, Heart, LogOut, Trash2, RotateCcw, Gift } from "lucide-react";
 
 type Row = Record<string, any>;
@@ -110,12 +111,8 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
   const person=board?.member;
   const adminAction=(title:string,op:string,params:Row={})=>setModal({kind:"admin",title,op,params});
   if(stage==="loading")return <main className="loading-screen"><span className="loading-mark" aria-label="Loading">支</span></main>;
-  if(stage!=="board" || !board || !person)return <main className="gate-shell"><section className="gate-card">
-    <div className="gate-orbit" aria-hidden="true"><span>支</span></div>
-    <p className="eyebrow">FRIENDS ONLY · SIDE QUEST LEDGER</p>
-    <h1 className="gate-title"><span>Life is the</span><span>main quest.</span><em>These make it interesting.</em></h1>
-    <p className="gate-copy">A shared ledger for small adventures, good stories, and Power Points.</p>
-    {stage==="signin" && <><a className="submit-button login-button" href="/api/auth/google">CONTINUE WITH GOOGLE <ArrowUpRight size={18}/></a><p className="helper">Sign in once, then answer three questions only the group would know.</p></>}
+  if(stage!=="board" || !board || !person)return <QuestGate enrolling={stage==="register"&&!!quiz}>
+    {stage==="signin" && <div className="signup-action"><a className="submit-button login-button" href="/api/auth/google">CONTINUE WITH GOOGLE <ArrowUpRight size={19}/></a><p className="helper">Sign in once. Answer three group questions.<br/>Your first 100 PP are on us.</p></div>}
     {stage==="setup" && <div className="setup-note"><b>Google sign-in is being connected.</b><p>The member board opens once setup is complete.</p><button className="text-button" onClick={()=>void boot()}>CHECK AGAIN</button></div>}
     {stage==="register" && <div className="registration"><h2>You're nearly in.</h2><p>Three group questions. Then your first 100 PP.</p>
       {!quiz?<button className="submit-button" disabled={busy} onClick={()=>void getQuiz()}>START GROUP CHECK</button>:<form onSubmit={register} className="enrollment-form">
@@ -128,8 +125,7 @@ export default function Ledger({adminPage=false}:{adminPage?:boolean}) {
     {stage==="blocked" && <p>Your membership is paused. Contact Kamrul.</p>}
     {stage==="error" && <button className="submit-button" onClick={()=>void boot()}>TRY AGAIN</button>}
     {error&&<p className="error-line" role="alert">{error}</p>}
-    <footer><span>SEA · 2026</span><span>BUILD A LIFE OFFLINE</span></footer>
-  </section></main>;
+  </QuestGate>;
 
   return <main id="top" className="app-shell">
     <header className="topbar">

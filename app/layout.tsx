@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./signup.css";
 
 export const metadata: Metadata = {
   title: "Side Quest Ledger",
